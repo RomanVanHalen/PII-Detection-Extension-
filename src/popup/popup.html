@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { width: 300px; font-family: 'Inter', sans-serif; padding: 15px; margin: 0; background: #F9FAFB; }
+        .card { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .count { font-size: 32px; font-weight: bold; color: #E53E3E; display: block; }
+        .label { font-size: 12px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; }
+        button { width: 100%; margin-top: 10px; padding: 8px; border-radius: 6px; border: 1px solid #D1D5DB; cursor: pointer; background: white; }
+        button:hover { background: #F3F4F6; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <span class="count" id="stat-count">0</span>
+        <span class="label">Exposures Blocked</span>
+    </div>
+    <button id="clear-btn">Clear History</button>
+    <script type="module" src="popup.js"></script>
+</body>
+</html>
