@@ -2,18 +2,26 @@
   "manifest_version": 3,
   "name": "PII Shield: Real-Time Exposure Detection",
   "version": "1.0.0",
-  "description": "A privacy-first extension to prevent accidental PII disclosure.",
-  "permissions": ["storage", "activeTab", "scripting"],
   "background": {
-    "service_worker": "src/background/service-worker.js"
+    "service_worker": "src/background/service-worker.js",
+    "type": "module"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["src/content/content.js"]
+      "js": ["src/content/content-loader.js"] 
     }
   ],
-  "icons": {
-    "128": "assets/icon128.png"
-  }
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/content/content-main.js",
+        "src/content/ui-controller.js",
+        "src/content/ui/*.js",
+        "src/utils/*.js"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "permissions": ["storage", "activeTab", "scripting"]
 }

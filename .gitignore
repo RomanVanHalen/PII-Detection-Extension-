@@ -1,0 +1,17 @@
+# --- Extension Specific ---
+# Local test benches (keep your private data out of Git)
+test.html
+test-bench/
+
+# --- System Files ---
+.DS_Store
+Thumbs.db
+
+# --- Logs & Sensitive Data ---
+*.log
+.env
+auth.json
+
+# --- IDE Folders ---
+.vscode/
+.idea/
