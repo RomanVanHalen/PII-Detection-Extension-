@@ -4,67 +4,72 @@ import { validateNIC, validateLuhn } from '../utils/validators.js';
 
 /**
  * TIERED DETECTION PIPELINE
- * Logic: Tier 1 (Regex) -> Tier 3 (Checksum Validation)
+ * Parallel processing with dual-stream sanitization.
  */
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === ACTIONS.CHECK_INPUT) {
         const rawInput = message.payload;
-        const cleanInput = sanitizeInput(rawInput);
+        
+        // LANE 1: Numeric Sanitization (For NIC and PCI)
+        // Strips spaces and hyphens so checksums don't break
+        const numericOnly = sanitizeInput(rawInput); 
+
+        // LANE 2: Literal Sanitization (For Email and Phone)
+        // Only trims outer whitespace to preserve internal symbols like '@' and '.'
+        const literalInput = rawInput.trim();
 
         let confirmedType = null;
 
-        // --- PIPELINE STEP 1: SRI LANKAN NIC ---
-        if (PII_PATTERNS.SRI_LANKA_NIC.COMBINED.test(cleanInput)) {
-            PII_PATTERNS.SRI_LANKA_NIC.COMBINED.lastIndex = 0; // Reset regex state
-            
-            // TIER 3 VALIDATION: Checksum & Date Logic
-            if (validateNIC(cleanInput)) {
+        // --- 1. SRI LANKAN NIC ---
+        if (PII_PATTERNS.SRI_LANKA_NIC.COMBINED.test(numericOnly)) {
+            PII_PATTERNS.SRI_LANKA_NIC.COMBINED.lastIndex = 0; 
+            if (validateNIC(numericOnly)) {
                 confirmedType = PII_TYPES.NIC;
             }
         } 
         
-        // --- PIPELINE STEP 2: PAYMENT CARDS (If NIC didn't match) ---
-        else if (PII_PATTERNS.CREDIT_CARD.GENERIC.test(cleanInput)) {
-            PII_PATTERNS.CREDIT_CARD.GENERIC.lastIndex = 0; // Reset regex state
-
-            // TIER 3 VALIDATION: Luhn Algorithm
-            if (validateLuhn(cleanInput)) {
+        // --- 2. PAYMENT CARDS (PCI) ---
+        if (!confirmedType && PII_PATTERNS.CREDIT_CARD.GENERIC.test(numericOnly)) {
+            PII_PATTERNS.CREDIT_CARD.GENERIC.lastIndex = 0;
+            if (validateLuhn(numericOnly)) {
                 confirmedType = PII_TYPES.CREDIT_CARD;
             }
         }
 
-        // --- FINAL INTERVENTION ---
+        // --- 3. EMAIL ADDRESSES ---
+        // CRITICAL: We use 'literalInput' here to keep the email structure intact
+        if (!confirmedType && PII_PATTERNS.EMAIL.test(literalInput)) {
+            PII_PATTERNS.EMAIL.lastIndex = 0;
+            confirmedType = PII_TYPES.EMAIL;
+        }
+
+        // --- 4. SRI LANKAN PHONE NUMBERS ---
+        if (!confirmedType && PII_PATTERNS.SL_PHONE.test(literalInput)) {
+            PII_PATTERNS.SL_PHONE.lastIndex = 0;
+            confirmedType = PII_TYPES.PHONE;
+        }
+
         if (confirmedType) {
             handlePositiveDetection(sender.tab.id, confirmedType);
         }
     }
-    
     return true; 
 });
 
-/**
- * Orchestrates the response when PII is cryptographically/mathematically confirmed.
- */
 async function handlePositiveDetection(tabId, type) {
-    // 1. Update the Analytics (Trust Engine)
     await logDetection();
-
-    // 2. Trigger the UI Intervention (The Warning Banner)
     chrome.tabs.sendMessage(tabId, { 
         action: ACTIONS.PII_DETECTED, 
         type: type 
     });
 }
 
-/**
- * Persists detection stats to Local Storage for the Popup Dashboard.
- */
 async function logDetection() {
     try {
         const data = await chrome.storage.local.get(['total_blocked']);
         const current = data.total_blocked || 0;
         await chrome.storage.local.set({ total_blocked: current + 1 });
     } catch (error) {
-        console.error("Storage Error:", error);
+        console.error("PII Shield Storage Error:", error);
     }
 }

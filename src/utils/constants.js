@@ -8,5 +8,6 @@ export const ACTIONS = {
 export const PII_TYPES = {
     NIC: 'Sri Lankan NIC',
     CREDIT_CARD: 'Payment Card',
-    PHONE: 'Phone Number'
+    PHONE: 'Phone Number',
+    EMAIL: 'Email Address' 
 };
