@@ -2,20 +2,37 @@
   "manifest_version": 3,
   "name": "PII Shield: Real-Time Exposure Detection",
   "version": "1.0.0",
+  "description": "Protects sensitive information like NIC, Credit Cards, and Mobile numbers in real-time.",
+  
+  "icons": {
+    "16": "src/assets/icons/icon16.png",
+    "32": "src/assets/icons/icon32.png",
+    "48": "src/assets/icons/icon48.png",
+    "128": "src/assets/icons/icon128.png"
+  },
+
   "action": {
     "default_popup": "src/popup/popup.html",
-    "default_title": "PII Shield"
+    "default_title": "PII Shield",
+    "default_icon": {
+      "16": "src/assets/icons/icon16.png",
+      "32": "src/assets/icons/icon32.png",
+      "48": "src/assets/icons/icon48.png"
+    }
   },
+
   "background": {
     "service_worker": "src/background/service-worker.js",
     "type": "module"
   },
+
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["src/content/content-loader.js"] 
+      "js": ["src/content/content-loader.js"]
     }
   ],
+
   "web_accessible_resources": [
     {
       "resources": [
@@ -27,13 +44,16 @@
       "matches": ["<all_urls>"]
     }
   ],
+
   "permissions": [
     "storage",
     "activeTab",
     "scripting"
   ],
+
   "host_permissions": [
     "https://urlhaus-api.abuse.ch/*",
-    "https://api.abuseipdb.com/*"
+    "https://api.abuseipdb.com/*",
+    "https://url.io/*" 
   ]
 }
