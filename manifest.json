@@ -2,6 +2,10 @@
   "manifest_version": 3,
   "name": "PII Shield: Real-Time Exposure Detection",
   "version": "1.0.0",
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "PII Shield"
+  },
   "background": {
     "service_worker": "src/background/service-worker.js",
     "type": "module"
