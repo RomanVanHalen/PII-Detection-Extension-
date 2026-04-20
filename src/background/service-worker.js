@@ -50,14 +50,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
 
         if (confirmedType) {
-            handlePositiveDetection(sender.tab.id, confirmedType);
+            handlePositiveDetection(sender.tab.id, sender.tab.url, confirmedType);
         }
     }
     return true; 
 });
 
-async function handlePositiveDetection(tabId, type) {
+async function handlePositiveDetection(tabId, tabUrl, type) {
     await logDetection();
+    await storeExposedWebsite(tabUrl, type);
     chrome.tabs.sendMessage(tabId, { 
         action: ACTIONS.PII_DETECTED, 
         type: type 
@@ -71,5 +72,40 @@ async function logDetection() {
         await chrome.storage.local.set({ total_blocked: current + 1 });
     } catch (error) {
         console.error("PII Shield Storage Error:", error);
+    }
+}
+
+async function storeExposedWebsite(url, piiType) {
+    try {
+        const urlObj = new URL(url);
+        const domain = urlObj.hostname;
+        
+        const data = await chrome.storage.local.get(['exposed_websites']);
+        let websites = data.exposed_websites || [];
+        
+        // Check if website already exists
+        const existingIndex = websites.findIndex(w => w.domain === domain);
+        
+        if (existingIndex >= 0) {
+            // Update existing entry - add timestamp and PII type if not already present
+            websites[existingIndex].lastDetected = new Date().toISOString();
+            if (!websites[existingIndex].piiTypes.includes(piiType)) {
+                websites[existingIndex].piiTypes.push(piiType);
+            }
+        } else {
+            // Add new entry
+            websites.push({
+                domain: domain,
+                url: url,
+                piiTypes: [piiType],
+                firstDetected: new Date().toISOString(),
+                lastDetected: new Date().toISOString(),
+                integrityCheckStatus: 'unchecked'
+            });
+        }
+        
+        await chrome.storage.local.set({ exposed_websites: websites });
+    } catch (error) {
+        console.error("Error storing exposed website:", error);
     }
 }

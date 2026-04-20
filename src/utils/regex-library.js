@@ -14,7 +14,6 @@ export const PII_PATTERNS = {
     },
 
     // Payment Card Industry (PCI)
-    // MODIFIED: Removed ^ and $ anchors. Added word boundaries \b.
     // This allows the sensor to find the card even if the user types "My card is 4111..."
     CREDIT_CARD: {
         VISA: /\b4[0-9]{12}(?:[0-9]{3})?\b/g,
@@ -23,7 +22,6 @@ export const PII_PATTERNS = {
     },
 
     // Email Addresses (RFC 5322 Standard)
-    // Removed the 'g' flag if you are using .test() in a loop to avoid lastIndex issues
     EMAIL: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
 
     // Sri Lankan Mobile Numbers (+94 or 07X)

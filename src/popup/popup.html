@@ -10,7 +10,7 @@
         
         body {
             width: 360px;
-            min-height: 400px;
+            height: 600px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
             background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
             color: #E2E8F0;
@@ -20,12 +20,13 @@
             padding: 32px 24px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            min-height: 400px;
+            height: 100%;
+            gap: 12px;
         }
         
         .header {
-            margin-bottom: 40px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
         }
         
         .logo-section {
@@ -70,10 +71,10 @@
             padding: 36px 24px;
             text-align: center;
             backdrop-filter: blur(10px);
-            margin-bottom: 32px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             position: relative;
             overflow: hidden;
+            flex-shrink: 0;
         }
         
         .stats-card::before {
@@ -119,6 +120,8 @@
         .footer {
             display: flex;
             gap: 12px;
+            flex-shrink: 0;
+            margin-top: 12px;
         }
         
         button {
@@ -152,25 +155,210 @@
             transform: translateY(0px);
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
         }
+
+        .section-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            background: rgba(148, 163, 184, 0.05);
+            color: #94A3B8;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+            color: white;
+            border-color: #3B82F6;
+        }
+
+        .section {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+
+        .section.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #overview-section {
+            justify-content: flex-start;
+        }
+
+        #websites-section {
+            justify-content: flex-start;
+        }
+
+        .websites-list {
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            background: rgba(30, 41, 59, 0.5);
+            padding: 8px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .website-item {
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(30, 64, 175, 0.04) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .website-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .website-domain {
+            font-weight: 700;
+            color: #60A5FA;
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
+
+        .website-pii-types {
+            font-size: 11px;
+            color: #94A3B8;
+            margin-bottom: 4px;
+        }
+
+        .pii-tag {
+            display: inline-block;
+            background: rgba(255, 107, 107, 0.2);
+            color: #FF6B6B;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 4px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .website-status {
+            font-size: 11px;
+            margin-bottom: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(148, 163, 184, 0.1);
+            color: #CBD5E1;
+        }
+
+        .website-status.malicious {
+            background: rgba(239, 68, 68, 0.2);
+            color: #FCA5A5;
+        }
+
+        .website-status.safe {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86EFAC;
+        }
+
+        .website-status.checking {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93C5FD;
+        }
+
+        .website-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .check-btn, .remove-btn {
+            flex: 1;
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .check-btn {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93C5FD;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .check-btn:hover:not(:disabled) {
+            background: rgba(59, 130, 246, 0.4);
+            border-color: #3B82F6;
+        }
+
+        .check-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .remove-btn {
+            background: rgba(239, 68, 68, 0.2);
+            color: #FCA5A5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .remove-btn:hover {
+            background: rgba(239, 68, 68, 0.4);
+            border-color: #EF4444;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 32px 16px;
+            color: #64748B;
+            font-size: 13px;
+        }
+
+        .empty-state-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div>
-            <div class="header">
-                <div class="logo-section">
-                    
-                    <div>
-                        <div class="header-title">PII Shield</div>
-                    </div>
+        <div class="header">
+            <div class="logo-section">
+                
+                <div>
+                    <div class="header-title">PII Shield</div>
                 </div>
-                <div class="header-subtitle">Real-Time PII Protection</div>
             </div>
-            
+            <div class="header-subtitle">Real-Time PII Protection</div>
+        </div>
+        
+        <div class="section-toggle">
+            <button class="tab-btn active" id="overview-tab">Overview</button>
+            <button class="tab-btn" id="websites-tab">Exposed Sites</button>
+        </div>
+
+        <div id="overview-section" class="section active">
             <div class="stats-card">
                 <span class="count" id="stat-count">0</span>
                 <span class="label">Exposures Identified</span>
                 <div class="stats-info">Data exposures detected on this page</div>
+            </div>
+        </div>
+
+        <div id="websites-section" class="section">
+            <div class="websites-list" id="websites-list">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🛡️</div>
+                    <div>No exposed websites detected yet</div>
+                </div>
             </div>
         </div>
         

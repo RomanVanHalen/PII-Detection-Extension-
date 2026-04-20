@@ -27,5 +27,13 @@
       "matches": ["<all_urls>"]
     }
   ],
-  "permissions": ["storage", "activeTab", "scripting"]
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://urlhaus-api.abuse.ch/*",
+    "https://api.abuseipdb.com/*"
+  ]
 }
